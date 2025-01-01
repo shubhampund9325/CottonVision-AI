@@ -1,194 +1,88 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cotton Disease Detection</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 20px;
-    }
-    h1 {
-      color: #4CAF50;
-    }
-    input[type="file"] {
-      margin: 20px 0;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-      margin-top: 20px;
-    }
-    pre {
-      text-align: left;
-      background: #f4f4f4;
-      padding: 10px;
-      margin: 20px auto;
-      width: 80%;
-      border-radius: 5px;
-      overflow-x: auto;
-    }
-  </style>
-</head>
-<body>
-  <h1>Cotton Disease Detection</h1>
-  <p>Select an image to upload:</p>
-  <input type="file" id="imageInput" accept="image/*">
-  <button onclick="uploadImage()">Upload and Detect</button>
-
-  <div id="results" style="margin-top: 30px;"></div>
-
-  <script>
-    async function uploadImage() {
-      const imageInput = document.getElementById('imageInput');
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = ''; // Clear previous results
-
-      if (!imageInput.files.length) {
-        alert('Please select an image first!');
-        return;
-      }
-
-      const file = imageInput.files[0];
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
-        // Show loading message
-        resultsDiv.innerHTML = '<p>Processing image...</p>';
-
-        // Send the image to the backend
-        const response = await fetch('http://127.0.0.1:5000/process', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const data = await response.json();
-
-        // Display detections
-        if (data.detections && data.detections.length > 0) {
-          let detectionHTML = `<h2>Detections</h2><pre>${JSON.stringify(data.detections, null, 2)}</pre>`;
-          resultsDiv.innerHTML = detectionHTML;
-        } else {
-          resultsDiv.innerHTML = '<p>No detections found.</p>';
-        }
-
-        // Display the processed image
-        if (data.image) {
-          const img = document.createElement('img');
-          img.src = `data:image/jpeg;base64,${data.image}`;
-          resultsDiv.appendChild(img);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        resultsDiv.innerHTML = '<p>Error processing the image.</p>';
-      }
-    }
-  </script>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YOLO + VGG16 Cotton Disease Detection</title>
+    <title>Cotton Disease Detection</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
+            padding: 20px;
         }
-        input {
-            margin: 20px 0;
+        h2 {
+            color: #4CAF50;
         }
-        img {
-            max-width: 90%;
+        h3 {
+            color: #333;
+        }
+        #resultImage {
+            margin-top: 20px;
+            max-width: 100%;
             height: auto;
-            border: 2px solid #ccc;
-            margin-top: 20px;
         }
-        #results {
-            margin-top: 20px;
+        #detections {
+            margin-top: 10px;
         }
-        .result-item {
-            margin: 10px 0;
+        p {
+            font-size: 14px;
+            color: #555;
         }
     </style>
 </head>
 <body>
-    <h1>YOLO + VGG16 Cotton Disease Detection</h1>
-    <p>Upload an image to detect cotton disease and classify the results in real-time.</p>
+    <h2>Cotton Disease Detection</h2>
+    <p>Select an image of cotton leaves or plants to detect disease:</p>
+    <input type="file" id="fileInput" accept="image/*">
+    <button onclick="uploadImage()">Upload</button>
 
-    <input type="file" id="imageInput" accept="image/*">
-    <button onclick="processImage()">Process Image</button>
+    <h3>Detection Results</h3>
+    <div id="detections"></div>
 
-    <div id="results">
-        <h2>Detection Results</h2>
-        <div id="detections"></div>
-        <img id="outputImage" alt="Processed Image">
-    </div>
+    <h3>Processed Image</h3>
+    <img id="resultImage" src="" alt="Processed Image" />
 
     <script>
-        async function processImage() {
-            const fileInput = document.getElementById('imageInput');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert("Please upload an image!");
-                return;
-            }
-
+        // Function to upload the selected image and process it using the Flask server
+        function uploadImage() {
+            const fileInput = document.getElementById('fileInput');
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append("file", fileInput.files[0]);
 
-            try {
-                const response = await fetch('http://127.0.0.1:5000/process', {
-                    method: 'POST',
-                    body: formData
-                });
+            // Send the image to the Flask server for processing
+            fetch('http://127.0.0.1:5000/process', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json()) // Expecting JSON response from the server
+            .then(data => {
+                // Clear previous detections
+                const detectionsDiv = document.getElementById('detections');
+                detectionsDiv.innerHTML = "";
 
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
+                // Display detection results (labels and confidence scores)
+                if (data.detections && data.detections.length > 0) {
+                    data.detections.forEach(detection => {
+                        const detectionText = document.createElement('p');
+                        detectionText.innerText = `Label: ${detection.label}, Confidence: ${detection.confidence}`;
+                        detectionsDiv.appendChild(detectionText);
+                    });
+                } else {
+                    detectionsDiv.innerHTML = "<p>No disease detected in the image.</p>";
                 }
 
-                const data = await response.json();
-
-                // Display detections
-                const detectionsDiv = document.getElementById('detections');
-                detectionsDiv.innerHTML = ''; // Clear previous results
-
-                data.detections.forEach((detection) => {
-                    const item = document.createElement('div');
-                    item.className = 'result-item';
-                    item.innerHTML = `
-                        <strong>Label:</strong> ${detection.label}<br>
-                        <strong>Confidence:</strong> ${(detection.confidence * 100).toFixed(2)}%<br>
-                        <strong>Bounding Box:</strong> [${detection.box.join(', ')}]
-                    `;
-                    detectionsDiv.appendChild(item);
-                });
-
-                // Display the processed image
-                const outputImage = document.getElementById('outputImage');
-                outputImage.src = `data:image/jpeg;base64,${data.image}`;
-            } catch (error) {
-                console.error("Error processing image:", error);
-                alert("Failed to process the image. Please try again.");
-            }
+                // Display the processed image (converted from base64)
+                const resultImage = document.getElementById('resultImage');
+                if (data.image) {
+                    resultImage.src = "data:image/jpeg;base64," + data.image;
+                } else {
+                    resultImage.src = "";
+                    resultImage.alt = "No processed image available";
+                }
+            })
+            .catch(error => {
+                console.error('Error during image upload:', error);
+                alert("There was an error processing the image. Please try again.");
+            });
         }
     </script>
 </body>
