@@ -4,59 +4,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotton Disease Prediction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Basic Reset */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: linear-gradient(135deg, #00b09b, #96c93d); /* Advanced Gradient */
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .navbar .toggle {
+            cursor: pointer;
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar .toggle:hover {
+            transform: rotate(90deg);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-right a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-right a:hover {
+            color: #ddd;
+        }
+
+        /* Settings View */
+        .settings {
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            text-align: left;
+            width: 300px;
+            position: absolute;
+            right: 20px;
+            top: 60px;
+            z-index: 10;
+            border: 1px solid #ddd;
+        }
+
+        .settings h2 {
+            color: #00b09b;
+            margin-bottom: 15px;
+        }
+
+        .settings label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .settings input[type="text"],
+        .settings input[type="password"],
+        .settings button {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .settings button {
+            background-color: #00b09b;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .settings button:hover {
+            background-color: #96c93d;
+        }
+        .settings .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+
+        /* Main Content Container */
+        .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .container {
+            min-height: calc(100vh - 80px);
             text-align: center;
-            background: #fff;
             padding: 20px;
+        }
+
+        .content {
+            background: #fff;
+            padding: 30px;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
         }
-        .container h1 {
+
+        .content h1 {
             margin-bottom: 20px;
+            color: #00b09b;
         }
-        input[type="file"] {
+
+        .content input[type="file"] {
             margin: 20px 0;
         }
+
+        /* Output Styles */
         .output {
             margin-top: 20px;
-            padding: 15px;
-            background: #eef;
+            padding: 20px;
+            background: #e0f2f7; /* Light Blue */
+            border: 1px solid #a7d9ed; /* Light Blue Border */
             border-radius: 8px;
             font-size: 1.2em;
+            text-align: center;
         }
+
+        .output #prediction {
+            font-weight: bold;
+            color: #00796b; /* Dark Teal */
+        }
+
+        /* Loader Styles */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            display: none;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .hidden {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <div class="navbar">
         <h1>Cotton Disease Prediction</h1>
-        <form id="uploadForm">
-            <input type="file" id="fileInput" name="file" accept="image/*" required>
-            <button type="submit">Predict</button>
-        </form>
-        <div class="output" id="output">
-            <p id="prediction">Upload an image to see the prediction.</p>
+        <div class="navbar-right">
+            <a href="#" id="loginLink">Login</a>
+            <a href="#" id="signupLink">Signup</a>
+            <i class="fas fa-cog fa-2x toggle" id="settingsToggle"></i>
         </div>
     </div>
 
+    <div class="settings" id="settingsView">
+        <button class="close-btn" id="closeSettings">&times;</button> 
+        <h2>Settings</h2>
+
+        <form id="loginForm">
+            <h3>Login</h3>
+            <label for="loginUsername">Username</label>
+            <input type="text" id="loginUsername" name="loginUsername" required>
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" name="loginPassword" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <form id="signupForm" class="hidden">
+            <h3>Signup</h3>
+            <label for="signupUsername">Username</label>
+            <input type="text" id="signupUsername" name="signupUsername" required>
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" name="signupPassword" required>
+            <button type="submit">Signup</button>
+        </form>
+        <p id="settingsMessage"></p>
+    </div>
+
+    <div class="container" id="mainContent" style="display: none;">
+        <div class="content">
+            <h1>Upload an Image</h1>
+            <form id="uploadForm">
+                <input type="file" id="fileInput" name="file" accept="image/*" required>
+                <button type="submit">Predict</button>
+            </form>
+            <div class="loader" id="loader"></div>
+            <div class="output" id="output">
+                <p id="prediction">Upload an image to see the prediction.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Cotton Disease Prediction
+    </footer>
+
     <script>
+        // Function to show the main content
+        function showMainContent() {
+            document.getElementById('mainContent').style.display = 'flex';
+        }
+
+        // Function to hide the main content
+        function hideMainContent() {
+            document.getElementById('mainContent').style.display = 'none';
+        }
+
+        // Check if the user is logged in on page load
+        window.addEventListener('load', () => {
+            if (isLoggedIn()) {
+                showMainContent();
+            } else {
+                hideMainContent();
+            }
+        });
+
         // Event listener for the form submission
         document.getElementById('uploadForm').addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
+            const predictionOutput = document.getElementById('prediction');
+            const loader = document.getElementById('loader');
 
             if (!file) {
                 alert('Please select an image file first.');
@@ -67,6 +288,10 @@
             formData.append('file', file);
 
             try {
+                // Show the loader
+                loader.style.display = 'block';
+                predictionOutput.textContent = 'Predicting...';
+
                 // Send the image to the backend
                 const response = await fetch('/predict', {
                     method: 'POST',
@@ -75,17 +300,122 @@
 
                 const result = await response.json();
 
+                // Hide the loader
+                loader.style.display = 'none';
+
                 // Handle the response from the backend
                 if (response.ok) {
-                    document.getElementById('prediction').textContent = 
+                    predictionOutput.textContent =
                         `Predicted Class: ${result.class}, Confidence: ${result.confidence}%`;
                 } else {
-                    document.getElementById('prediction').textContent = 
-                        `Error: ${result.error}`;
+                    predictionOutput.textContent = `Error: ${result.error}`;
                 }
             } catch (error) {
-                document.getElementById('prediction').textContent = 
-                    'Error: Unable to connect to the server.';
+                loader.style.display = 'none';
+                predictionOutput.textContent = 'Error: Unable to connect to the server.';
+            }
+        });
+
+        // Settings toggle functionality
+        const settingsToggle = document.getElementById('settingsToggle');
+        const settingsView = document.getElementById('settingsView');
+        const loginLink = document.getElementById('loginLink');
+        const signupLink = document.getElementById('signupLink');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const closeSettingsBtn = document.getElementById('closeSettings');
+        const settingsMessage = document.getElementById('settingsMessage');
+
+
+
+        function toggleSettings() {
+            if (settingsView.style.display === 'none' || settingsView.style.display === '') {
+                settingsView.style.display = 'block';
+                showLoginForm(); // Default to login form
+            } else {
+                settingsView.style.display = 'none';
+            }
+        }
+
+        function showLoginForm() {
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+        }
+
+        function showSignupForm() {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+        }
+
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsView.style.display = 'none';
+        });
+
+
+        settingsToggle.addEventListener('click', toggleSettings);
+        loginLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            toggleSettings();
+            showLoginForm();
+        });
+        signupLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            toggleSettings();
+            showSignupForm();
+        });
+
+        // LocalStorage functions for user authentication
+        function saveUser(username, password) {
+            localStorage.setItem(username, password);
+        }
+
+        function getUser(username) {
+            return localStorage.getItem(username);
+        }
+
+        function isLoggedIn() {
+            return localStorage.getItem('loggedInUser') !== null;
+        }
+
+        function setLoggedInUser(username) {
+            localStorage.setItem('loggedInUser', username);
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            hideMainContent();
+            settingsMessage.textContent = 'Logged out successfully.';
+        }
+        // Handle Signup
+        signupForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const signupUsername = document.getElementById('signupUsername').value;
+            const signupPassword = document.getElementById('signupPassword').value;
+
+            if (getUser(signupUsername)) {
+                settingsMessage.textContent = 'Username already exists.';
+                return;
+            }
+
+            saveUser(signupUsername, signupPassword);
+            settingsMessage.textContent = 'Signup successful. You can now login.';
+            showLoginForm(); 
+        });
+
+        // Handle Login
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const loginUsername = document.getElementById('loginUsername').value;
+            const loginPassword = document.getElementById('loginPassword').value;
+            const storedPassword = getUser(loginUsername);
+
+            if (storedPassword && storedPassword === loginPassword) {
+                setLoggedInUser(loginUsername);
+                settingsMessage.textContent = 'Login successful.';
+                settingsView.style.display = 'none';
+                showMainContent();
+            } else {
+                settingsMessage.textContent = 'Invalid username or password.';
             }
         });
     </script>
