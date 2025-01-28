@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
-from tensorflow.keras.models import load_model
+#from tensorflow.keras.models import load_model
+from keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 import os
@@ -7,7 +8,8 @@ import os
 app = Flask(__name__)
 
 # Load the model
-MODEL_PATH = "/workspaces/Cotton-Disease-Recognition-using-YOLO-Algorithm-/cotton_disease_mobilenet.h5"
+#MODEL_PATH = "/Users/shubhampund9767/Cotton-Disease-Recognition-using-YOLO-Algorithm--1/cotton_disease_mobilenet.h5"
+MODEL_PATH="/Users/shubhampund9767/Cotton-Disease-Recognition-using-YOLO-Algorithm--1/latestmodel.h5"
 model = load_model(MODEL_PATH)
 
 # Class names

@@ -1,0 +1,5 @@
+path: /Users/shubhampund9767/Cotton-Disease-Recognition-using-YOLO-Algorithm--1/Cotton Disease
+train: /Users/shubhampund9767/Cotton-Disease-Recognition-using-YOLO-Algorithm--1/Cotton Disease/train
+val: /Users/shubhampund9767/Cotton-Disease-Recognition-using-YOLO-Algorithm--1/Cotton Disease/val
+nc: 4  # Number of classes
+names: ['diseased cotton leaf', 'diseased cotton plant', 'fresh cotton leaf', 'fresh cotton plant']

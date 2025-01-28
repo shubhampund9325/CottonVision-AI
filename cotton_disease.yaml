@@ -1,11 +1,34 @@
+# # Cotton Disease Detection Dataset Configuration
+
+# # Root path to the dataset
+# path: /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease  # Update this path to the dataset location on your system
+
+# # Train and validation directories (relative to the `path`)
+# train: [/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/diseased cotton leaf, /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/diseased cotton plant,/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/fresh cotton leaf,/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/fresh cotton plant ]
+# val: [/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/diseased cotton leaf, /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/diseased cotton plant,/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/fresh cotton leaf,/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/fresh cotton plant ]
+
+# # Number of classes
+# nc: 4
+
+# # List of class names
+# names: ['diseased cotton leaf', 'diseased cotton plant', 'fresh cotton leaf', 'fresh cotton plant']
 # Cotton Disease Detection Dataset Configuration
 
 # Root path to the dataset
 path: /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease  # Update this path to the dataset location on your system
 
 # Train and validation directories (relative to the `path`)
-train: [/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/diseased cotton leaf, /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/diseased cotton plant,/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/fresh cotton leaf,/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/fresh cotton plant ]
-val: [/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/diseased cotton leaf, /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/diseased cotton plant,/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/fresh cotton leaf,/Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/fresh cotton plant ]
+train: 
+  - /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/diseased cotton leaf
+  - /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/diseased cotton plant
+  - /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/fresh cotton leaf
+  - /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/train/fresh cotton plant
+
+val: 
+  - /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/diseased cotton leaf
+  - /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/diseased cotton plant
+  - /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/fresh cotton leaf
+  - /Users/shubhampund9767/Desktop/Yolo Project/Cotton Disease/val/fresh cotton plant
 
 # Number of classes
 nc: 4
