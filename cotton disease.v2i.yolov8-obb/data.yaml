@@ -1,0 +1,14 @@
+train: /Users/shubhampund9767/Documents/Cotton-Disease-Recognition-using-YOLO-Algorithm--1/cotton disease.v2i.yolov8-obb/train/images
+test: /Users/shubhampund9767/Documents/Cotton-Disease-Recognition-using-YOLO-Algorithm--1/cotton disease.v2i.yolov8-obb/train/images
+val: /Users/shubhampund9767/Documents/Cotton-Disease-Recognition-using-YOLO-Algorithm--1/cotton disease.v2i.yolov8-obb/train/images
+nc: 9
+names: 
+  0: Aphid
+  1: Aphids
+  2: Army worm
+  3: Bacterial Blight
+  4: Cotton Ball Rot
+  5: Green Cotton Boll
+  6: Healthy
+  7: Powdery mildew
+  8: Target Spot
