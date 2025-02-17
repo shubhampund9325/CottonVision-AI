@@ -274,7 +274,43 @@
         const startButton = document.getElementById('startCamera');
         const stopButton = document.getElementById('stopCamera');
         const captureButton = document.getElementById('capture');
-        
+        disease_info = {
+          "Aphid": {"description": "Small, soft-bodied insects that suck sap.", 
+                    "precaution": "Use resistant varieties, introduce natural predators.", 
+                    "medicine": "Neem oil, Imidacloprid."},
+      
+          "Aphids": {"description": "Rapidly multiplying sap-sucking pests.", 
+                     "precaution": "Field monitoring, remove infected plants.", 
+                     "medicine": "Pyrethroid-based insecticides."},
+      
+          "Army Worm": {"description": "Caterpillars that chew leaves.", 
+                        "precaution": "Pheromone traps, biological control.", 
+                        "medicine": "Bacillus thuringiensis, Spinosad."},
+      
+          "Bacterial Blight": {"description": "Water-soaked lesions leading to wilting.", 
+                               "precaution": "Use disease-free seeds, crop rotation.", 
+                               "medicine": "Copper-based bactericides, Streptomycin."},
+      
+          "Cotton Boll Rot": {"description": "Fungal infection causing decay.", 
+                              "precaution": "Ensure aeration, remove infected bolls.", 
+                              "medicine": "Carbendazim-based fungicides."},
+      
+          "Green Cotton Boll": {"description": "Immature bolls remain green.", 
+                                "precaution": "Proper irrigation, control bollworms.", 
+                                "medicine": "Mancozeb fungicide, growth regulators."},
+      
+          "Healthy": {"description": "No disease present.", 
+                      "precaution": "Good soil fertility, proper rotation.", 
+                      "medicine": "No treatment needed."},
+      
+          "Powdery Mildew": {"description": "White powdery fungal spots on leaves.", 
+                             "precaution": "Avoid humidity, remove infected leaves.", 
+                             "medicine": "Sulfur-based fungicides, Tebuconazole."},
+      
+          "Target Spot": {"description": "Circular brown spots leading to defoliation.", 
+                          "precaution": "Improve drainage, avoid high density.", 
+                          "medicine": "Chlorothalonil, copper-based fungicides."}
+      }
         let stream = null;
 
         async function startCamera() {
@@ -445,10 +481,26 @@
                     resultsHTML += `
                         <h3>Detections:</h3>
                         <ul>
-                            ${data.detections.map(det => `
-                                <li>Found ${det.class} (Confidence: ${(det.confidence * 100).toFixed(2)}%)</li>
-                            `).join('')}
+                             ${data.detections.map(det => {
+        let disease = disease_info[det.class];
+        return disease ? `
+            <li>
+                <strong>Detected:</strong> ${disease.name} (Confidence: ${(det.confidence * 100).toFixed(2)}%)<br>
+                <strong>Description:</strong> ${disease.description}<br>
+                <strong>Precaution:</strong> ${disease.precaution}<br>
+                <strong>Recommended Medicine:</strong> ${disease.medicine}
+            </li>
+        ` : `<li>Unknown disease detected (Class ID: ${det.class})</li>`;
+    }).join('')}
+
+
+
+
+
                         </ul>
+                        
+
+                        
                     `;
                 } else {
                     resultsHTML += '<p>No detections found</p>';
