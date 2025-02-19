@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": "."
+  }
+}

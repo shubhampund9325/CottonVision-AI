@@ -15,7 +15,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
 # Update path to use the .pt model instead of .torchscript
-YOLO_MODEL_PATH = "/Users/shubhampund9767/Desktop/Yolo Project/runs/detect/train3/weights/best.pt"
+YOLO_MODEL_PATH = "./models/best.pt"
 
 # Disease information dictionary
 disease_info = {
@@ -116,4 +116,4 @@ def processed_image(filename):
     return send_from_directory(PROCESSED_FOLDER, filename)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run()

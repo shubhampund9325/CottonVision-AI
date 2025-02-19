@@ -1,0 +1,14 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "main.py"
+        }
+    ]
+}
