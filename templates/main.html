@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Cotton Disease Detection</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f2f5;
+            background-color: rgb(36, 213, 139);
+
         }
 
         .container {
@@ -18,11 +20,11 @@
             padding: 20px;
             background-color: white;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(149, 87, 87, 0.1);
         }
 
         h1 {
-            color: #1a73e8;
+            color:rgb(0, 46, 27);
             text-align: center;
             margin-bottom: 30px;
         }
@@ -74,19 +76,65 @@
         }
 
         #result {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            min-height: 100px;
-        }
+          padding: 20px;
+          background-color: #f8f9fa;
+          border-radius: 10px;
+          min-height: 120px;
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        .detection-result {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #e8f0fe;
-            border-radius: 5px;
-        }
+      .detection-result {
+          margin-top: 15px;
+          padding: 15px;
+          background-color: #e3f2fd;
+          border-radius: 10px;
+          border-left: 5px solid #007bff;
+          transition: transform 0.3s ease-in-out;
+      }
 
+      .detection-result:hover {
+          transform: scale(1.02);
+      }
+
+      .detection-result ul {
+          list-style: none;
+          padding-left: 0;
+      }
+
+      .detection-result li {
+          margin: 10px 0;
+          padding: 10px;
+          background: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          border-left: 4px solid #007bff;
+          transition: background 0.3s ease-in-out;
+      }
+
+      .detection-result li:hover {
+          background: #f1faff;
+      }
+
+      .disease-name {
+          font-weight: bold;
+          color: #007bff;
+      }
+
+      .confidence {
+          font-size: 14px;
+          color: #6c757d;
+      }
+
+      .description {
+          font-style: italic;
+          color: #555;
+      }
+
+      .precaution, .medicine {
+          margin-top: 5px;
+          font-size: 14px;
+          color: #333;
+      }
         .error-message {
             color: #d93025;
             padding: 10px;
@@ -110,31 +158,165 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        #processedImage img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .upload-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px dashed #1a73e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #1557b0;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            color: #1a73e8;
+            margin-bottom: 10px;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #f0f2f5;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .tab-button.active {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+         /* Style for the Gemini-generated HTML container */
+        #gemini-response-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        #gemini-response-container h2 {
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Cotton Disease Detection System</h1>
         
-        <div class="detection-area">
-            <div class="video-section">
-                <h2>Camera Feed</h2>
-                <video id="video" autoplay playsinline></video>
-                <canvas id="canvas" style="display: none;"></canvas>
-                <div class="controls">
-                    <button id="startCamera">Start Camera</button>
-                    <button id="capture">Capture & Detect</button>
-                    <button id="stopCamera">Stop Camera</button>
-                </div>
-                <div class="loader" id="loader"></div>
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="camera">Camera</button>
+                <button class="tab-button" data-tab="upload">Upload Image</button>
             </div>
+        </div>
 
-            <div class="result-section">
-                <h2>Detection Results</h2>
-                <div id="result">
-                    <p>Waiting for detection...</p>
+        <div class="tab-content active" id="camera-tab">
+            <div class="detection-area">
+                <div class="video-section">
+                    <h2>Camera Feed</h2>
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <div class="controls">
+                        <button id="startCamera">Start Camera</button>
+                        <button id="capture">Capture & Detect</button>
+                        <button id="stopCamera">Stop Camera</button>
+                    </div>
+                    <div class="loader" id="loader"></div>
                 </div>
-                <div id="processedImage"></div>
+
+                <div class="result-section">
+                    <h2>Detection Results</h2>
+                    <div id="result">
+                        <p>Waiting for detection...</p>
+                    </div>
+                    <div id="processedImage"></div>
+                    <!-- Gemini Response Container -->
+                    <div id="gemini-response-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="upload-tab">
+            <div class="detection-area">
+                <div class="upload-section">
+                    <h2>Upload Image</h2>
+                    <div class="file-upload" id="dropZone">
+                        <span class="upload-icon">📁</span>
+                        <p>Drag and drop an image here or click to select</p>
+                        <input type="file" id="fileInput" accept="image/*">
+                        <img id="imagePreview" class="preview-image">
+                    </div>
+                    <div class="controls">
+                        <button id="detectUpload" disabled>Detect</button>
+                    </div>
+                    <div class="loader" id="uploadLoader"></div>
+                </div>
+
+                <div class="result-section">
+                    <h2>Detection Results</h2>
+                    <div id="uploadResult">
+                        <p>Waiting for detection...</p>
+                    </div>
+                    <div id="uploadProcessedImage"></div>
+                    <!-- Gemini Response Container -->
+                    <div id="upload-gemini-response-container"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -144,28 +326,88 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const resultDiv = document.getElementById('result');
-        const processedImage = document.getElementById('processedImage');
         const loader = document.getElementById('loader');
         const startButton = document.getElementById('startCamera');
         const stopButton = document.getElementById('stopCamera');
         const captureButton = document.getElementById('capture');
-        
+       disease_info = {
+    "Aphid": {
+        "disease_name": "Aphid",
+        "description": "Small, soft-bodied insects that suck sap.",
+        "precaution": "Use resistant varieties, introduce natural predators.",
+        "medicine": "Neem oil, Imidacloprid."
+    },
+
+    "Aphids": {
+        "disease_name": "Aphids",
+        "description": "Rapidly multiplying sap-sucking pests.",
+        "precaution": "Field monitoring, remove infected plants.",
+        "medicine": "Pyrethroid-based insecticides."
+    },
+
+    "Army Worm": {
+        "disease_name": "Army Worm",
+        "description": "Caterpillars that chew leaves.",
+        "precaution": "Pheromone traps, biological control.",
+        "medicine": "Bacillus thuringiensis, Spinosad."
+    },
+
+    "Bacterial Blight": {
+        "disease_name": "Bacterial Blight",
+        "description": "Water-soaked lesions leading to wilting.",
+        "precaution": "Use disease-free seeds, crop rotation.",
+        "medicine": "Copper-based bactericides, Streptomycin."
+    },
+
+    "Cotton Boll Rot": {
+        "disease_name": "Cotton Boll Rot",
+        "description": "Fungal infection causing decay.",
+        "precaution": "Ensure aeration, remove infected bolls.",
+        "medicine": "Carbendazim-based fungicides."
+    },
+
+    "Green Cotton Boll": {
+        "disease_name": "Green Cotton Boll",
+        "description": "Immature bolls remain green.",
+        "precaution": "Proper irrigation, control bollworms.",
+        "medicine": "Mancozeb fungicide, growth regulators."
+    },
+
+    "Healthy": {
+        "disease_name": "Healthy",
+        "description": "No disease present.",
+        "precaution": "Good soil fertility, proper rotation.",
+        "medicine": "No treatment needed."
+    },
+
+    "Powdery Mildew": {
+        "disease_name": "Powdery Mildew",
+        "description": "White powdery fungal spots on leaves.",
+        "precaution": "Avoid humidity, remove infected leaves.",
+        "medicine": "Sulfur-based fungicides, Tebuconazole."
+    },
+
+    "Target Spot": {
+        "disease_name": "Target Spot",
+        "description": "Circular brown spots leading to defoliation.",
+        "precaution": "Improve drainage, avoid high density.",
+        "medicine": "Chlorothalonil, copper-based fungicides."
+    }
+}
+
         let stream = null;
 
         async function startCamera() {
             try {
                 stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
+                    video: { width: { ideal: 1280 }, height: { ideal: 720 } }
                 });
                 video.srcObject = stream;
                 startButton.disabled = true;
                 stopButton.disabled = false;
                 captureButton.disabled = false;
             } catch (error) {
-                showError("Error accessing camera: " + error.message);
+                resultDiv.innerHTML = `<div class="error-message">Error accessing camera: ${error.message}</div>`;
             }
         }
 
@@ -184,7 +426,7 @@
 
             loader.style.display = 'block';
             resultDiv.innerHTML = '<p>Processing...</p>';
-            
+
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0);
@@ -200,67 +442,201 @@
                 });
 
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                
+
                 const data = await response.json();
-                displayResults(data);
+
+                if (data.status === 'success') {
+                    let resultsHTML = '<div class="detection-result">';
+                    if (data.detections && data.detections.length > 0) {
+                        resultsHTML += `
+                            <h3>Detections:</h3>
+                            <ul>
+                                ${data.detections.map(det => {
+                                    const confidence = Math.min(det.confidence || 0, 100).toFixed(2);
+                                    return `
+                                        <li>
+                                            <strong>Disease:</strong> ${det.class}<br>
+                                            <strong>Confidence:</strong> ${confidence}%<br>
+                                            <strong>Description:</strong> ${det.description || "No description available"}<br>
+                                            <strong>Precaution:</strong> ${det.precaution || "No precautions required"}<br>
+                                            <strong>Recommended Medicine:</strong> ${det.medicine || "No treatment needed"}
+                                        </li>
+                                    `;
+                                }).join('')}
+                            </ul>
+                        `;
+                    } else {
+                        resultsHTML += '<p>No disease detected - Plant appears healthy</p>';
+                    }
+                    resultsHTML += '</div>';
+                    resultDiv.innerHTML = resultsHTML;
+                    
+                    // Inject the Gemini response
+                    document.getElementById('gemini-response-container').innerHTML = data.gemini_response;
+                } else {
+                    resultDiv.innerHTML = `<div class="error-message">Detection error: ${data.error}</div>`;
+                }
             } catch (error) {
-                showError("Detection error: " + error.message);
+                resultDiv.innerHTML = `<div class="error-message">Detection error: ${error.message}</div>`;
             } finally {
                 loader.style.display = 'none';
             }
         }
 
-        function displayResults(data) {
-            let resultsHTML = '<div class="detection-result">';
-            
-            if (data.class) {
-                resultsHTML += `
-                    <h3>Classification:</h3>
-                    <p>Type: ${data.class}</p>
-                    <p>Confidence: ${(data.confidence * 100).toFixed(2)}%</p>
-                `;
-            }
-
-            if (data.detections && data.detections.length > 0) {
-                resultsHTML += `
-                    <h3>Detections:</h3>
-                    <ul>
-                        ${data.detections.map(det => `
-                            <li>Found ${det.class} (Confidence: ${(det.confidence * 100).toFixed(2)}%)</li>
-                        `).join('')}
-                    </ul>
-                `;
-            }
-
-            resultsHTML += '</div>';
-            resultDiv.innerHTML = resultsHTML;
-
-            // Display processed image if available
-            if (data.processed_image) {
-                processedImage.innerHTML = `
-                    <img src="/processed/${data.processed_image.split('/').pop()}" 
-                         alt="Processed image" 
-                         style="max-width: 100%; margin-top: 10px; border-radius: 5px;">
-                `;
-            }
-        }
-
-        function showError(message) {
-            resultDiv.innerHTML = `
-                <div class="error-message">
-                    ${message}
-                </div>
-            `;
-        }
-
-        // Event Listeners
         startButton.addEventListener('click', startCamera);
         stopButton.addEventListener('click', stopCamera);
         captureButton.addEventListener('click', captureAndDetect);
 
-        // Initialize
         stopButton.disabled = true;
         captureButton.disabled = true;
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+
+                // Update button states
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Update content visibility
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${tabId}-tab`) {
+                        content.classList.add('active');
+                    }
+                });
+
+                // Stop camera if switching away from camera tab
+                if (tabId !== 'camera' && stream) {
+                    stopCamera();
+                }
+            });
+        });
+
+        // File upload handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const detectUploadBtn = document.getElementById('detectUpload');
+        const uploadResult = document.getElementById('uploadResult');
+        const uploadProcessedImage = document.getElementById('uploadProcessedImage');
+        const uploadLoader = document.getElementById('uploadLoader');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#1557b0';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#1a73e8';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#1a73e8';
+
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                detectUploadBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        detectUploadBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            uploadLoader.style.display = 'block';
+            uploadResult.innerHTML = '<p>Processing...</p>';
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/detect', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                       // Inject the Gemini response into the container
+                document.getElementById('upload-gemini-response-container').innerHTML = data.gemini_response;
+
+                let resultsHTML = '<div class="detection-result">';
+
+                if (data.detections && data.detections.length > 0) {
+                    resultsHTML += `
+                        <h3>Detections:</h3>
+                        <ul>
+                            ${data.detections.map(det => {
+                                const confidence = (det.confidence || 0).toFixed(2);
+                                return `
+                                    <li>
+                                        <strong>Disease Name:</strong> ${det.class}<br>
+                                        <strong>Confidence:</strong> ${confidence}%<br>
+                                        <strong>Description:</strong> ${det.description || "No description available"}<br>
+                                        <strong>Precaution:</strong> ${det.precaution || "No precautions required"}<br>
+                                        <strong>Recommended Medicine:</strong> ${det.medicine || "No treatment needed"}
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ul>
+                    `;
+                } else {
+                    resultsHTML += '<p>No detections found</p>';
+                }
+
+                resultsHTML += '</div>';
+                uploadResult.innerHTML = resultsHTML;
+
+                if (data.processed_image) {
+                    uploadProcessedImage.innerHTML = `
+                        <img src="/processed/${data.processed_image}"
+                             alt="Processed image with detections"
+                             style="max-width: 100%; margin-top: 10px; border-radius: 5px;">
+                    `;
+                }
+            } catch (error) {
+                uploadResult.innerHTML = `
+                    <div class="error-message">
+                        Detection error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                uploadLoader.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
