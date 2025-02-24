@@ -7,7 +7,7 @@ import uuid
 from ultralytics import YOLO
 import google.generativeai as genai
 from dotenv import load_dotenv  # Import load_dotenv
-
+from gtts import gTTS
 app = Flask(__name__)
 
 # Load environment variables from .env file
@@ -59,14 +59,51 @@ def initialize_model():
 # Initialize model
 yolo_model = initialize_model()
 
-def generate_gemini_response(prompt):
-    """Generates a response using the Gemini API."""
+# def generate_gemini_response(prompt):
+#     """Generates a response using the Gemini API."""
+#     try:
+#         response = model.generate_content(prompt)
+#         return response.text
+#     except Exception as e:
+#         print(f"Error generating Gemini response: {e}")
+#         return "Sorry, I couldn't generate a response at this time."
+def generate_gemini_response(disease_list):
+    """Generates a structured Gemini response with text output."""
     try:
+        disease_details = "\n".join(
+            [
+                f"- **{d['class']}**: {d['description']}\n  - Precaution: {d['precaution']}\n  - Medicine: {d['medicine']}"
+                for d in disease_list
+            ]
+        )
+
+        prompt = f"""
+        Generate a structured report based on the following detected diseases in a cotton field:
+        {disease_details}
+        
+        - Format it in markdown text.
+        - The report should have disease identification, symptoms, recommended medicines, and precautions.
+        - At the end, include a summarized expert advice.
+        """
+        
         response = model.generate_content(prompt)
-        return response.text
+        return response.text if response else "Unable to generate response."
+
     except Exception as e:
         print(f"Error generating Gemini response: {e}")
         return "Sorry, I couldn't generate a response at this time."
+    from gtts import gTTS
+
+def text_to_speech(text, filename="gemini_response.mp3"):
+    """Convert text to speech and save as MP3."""
+    try:
+        tts = gTTS(text, lang="en")
+        audio_path = os.path.join(PROCESSED_FOLDER, filename)
+        tts.save(audio_path)
+        return filename
+    except Exception as e:
+        print(f"Error generating speech: {e}")
+        return None
 
 @app.route('/')
 def home():
@@ -106,7 +143,7 @@ def detect():
                     if class_id in disease_info:
                         class_data = disease_info[class_id]
                         detection_text = class_data['name']
-                        confidence_score = min(conf * 100, 100)  # Ensure confidence doesn't exceed 100%
+                        confidence_score = min(conf, 100)  # Ensure confidence doesn't exceed 100%
                         
                         detections.append({
                             "class": class_data["name"],  # Use the actual disease name
